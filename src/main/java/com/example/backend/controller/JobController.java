@@ -57,4 +57,11 @@ public class JobController {
         List<JobDto> jobs = jobService.searchJobs(keyword);
         return ResponseEntity.ok(jobs);
     }
+
+    @GetMapping
+    public ResponseEntity<List<JobDto>> getAllJobs() {
+        List<JobDto> jobs = jobService.getAllJobs();
+        return ResponseEntity.ok(jobs);
+    }
+
 }

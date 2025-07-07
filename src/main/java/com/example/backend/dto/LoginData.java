@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginData {
+    private Long id;        // add this
     private String email;
     private String password;  // add this
     private String role;

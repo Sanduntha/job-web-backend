@@ -10,4 +10,6 @@ public interface JobService {
     void deleteJob(Long jobId) throws Exception;
     List<JobDto> getJobsByEmployer(Long employerId);
     List<JobDto> searchJobs(String keyword);
+
+    List<JobDto> getAllJobs();
 }

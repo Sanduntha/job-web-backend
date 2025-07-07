@@ -7,6 +7,7 @@ import com.example.backend.repo.EmployerProfileRepo;
 import com.example.backend.repo.JobRepo;
 import com.example.backend.service.JobService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,19 +19,19 @@ public class JobServiceImpl implements JobService {
 
     private final JobRepo jobRepo;
     private final EmployerProfileRepo employerProfileRepo;
+    private final ModelMapper modelMapper;
 
     @Override
-    public JobDto addJob(JobDto jobDto) {
-        // Ensure employer exists before saving job
-        EmployerProfile employer = employerProfileRepo.findById(jobDto.getEmployerId())
-                .orElseThrow(() -> new RuntimeException("Employer not found"));
+    public JobDto addJob(JobDto dto) throws Exception {
+        EmployerProfile employer = employerProfileRepo.findById(dto.getEmployerId())
+                .orElseThrow(() -> new Exception("Employer not found"));
 
         Job job = new Job();
-        job.setTitle(jobDto.getTitle());
-        job.setDescription(jobDto.getDescription());
-        job.setCompanyName(jobDto.getCompanyName());
-        job.setLocation(jobDto.getLocation());
-        job.setEmployer(employer); // ✅ set entity, not ID
+        job.setTitle(dto.getTitle());
+        job.setDescription(dto.getDescription());
+        job.setLocation(dto.getLocation());
+        job.setEmployer(employer);
+        job.setCompanyName(employer.getCompanyName());
 
         Job saved = jobRepo.save(job);
 
@@ -72,16 +73,22 @@ public class JobServiceImpl implements JobService {
                 .collect(Collectors.toList());
     }
 
-    private JobDto toDto(Job job) {
-        return new JobDto(
-                job.getId(),
-                job.getTitle(),
-                job.getDescription(),
-                job.getCompanyName(),
-                job.getLocation(),
-                job.getEmployer() != null ? job.getEmployer().getId() : null,
-                job.getApplications()
-        );
+    @Override
+    public List<JobDto> getAllJobs() {
+        return jobRepo.findAll().stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
 
+    // ✅ Safe mapping method
+    private JobDto toDto(Job job) {
+        JobDto dto = new JobDto();
+        dto.setId(job.getId());
+        dto.setTitle(job.getTitle());
+        dto.setDescription(job.getDescription());
+        dto.setCompanyName(job.getCompanyName());
+        dto.setLocation(job.getLocation());
+        dto.setEmployerId(job.getEmployer() != null ? job.getEmployer().getId() : null);
+        return dto;
+    }
 }
