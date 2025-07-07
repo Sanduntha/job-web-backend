@@ -33,6 +33,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public ApplicationDto apply(ApplicationDto dto) throws Exception {
+        System.out.println("Applying for job ID: " + dto.getJobId() + " by jobseeker ID: " + dto.getJobSeekerId());
+
         Job job = jobRepo.findById(dto.getJobId())
                 .orElseThrow(() -> new Exception("Job not found"));
         JobSeekerProfile js = jobSeekerRepo.findById(dto.getJobSeekerId())

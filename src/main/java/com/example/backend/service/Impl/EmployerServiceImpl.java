@@ -6,6 +6,7 @@ import com.example.backend.entity.User;
 import com.example.backend.repo.EmployerProfileRepo;
 import com.example.backend.repo.UserRepo;
 import com.example.backend.service.EmployerService;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -42,4 +43,12 @@ public class EmployerServiceImpl implements EmployerService {
     public EmployerDto getEmployerByEmail(String email) {
         return null;
     }
+
+    @PostConstruct
+    public void init() {
+        modelMapper.typeMap(EmployerDto.class, EmployerProfile.class).addMappings(mapper ->
+                mapper.skip(EmployerProfile::setUser)
+        );
+    }
+
 }

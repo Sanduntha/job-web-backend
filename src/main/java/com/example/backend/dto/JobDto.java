@@ -19,7 +19,8 @@ public class JobDto {
     private String companyName;
     private String location;
     private Long employerId;
-    @OneToMany(mappedBy = "job", cascade = CascadeType.REMOVE)
-    private List<Application> applications;
+
+//    @OneToMany(mappedBy = "job", cascade = CascadeType.REMOVE)
+//    private List<Application> applications;
 
 }

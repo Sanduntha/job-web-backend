@@ -30,7 +30,8 @@ public class JobSeekerController {
             JobSeekerDto js = jobSeekerService.getByUserId(userId);
             return ResponseEntity.ok(js);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(404).body("Job Seeker profile not found");
         }
+
     }
 }

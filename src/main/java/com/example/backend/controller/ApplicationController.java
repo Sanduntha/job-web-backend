@@ -24,29 +24,36 @@ import java.util.List;
 public class ApplicationController {
 
     private final ApplicationService applicationService;
-    private final ApplicationRepo applicationRepo; // ✅ Add this
+    private final ApplicationRepo applicationRepo;
 
+    // ✅ Fixed mapping method (removed extra brace)
     @PostMapping(value = "/apply", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> applyForJob(
             @RequestPart("application") String applicationJson,
             @RequestPart("cvFile") MultipartFile cvFile
     ) {
+        System.out.println("✅ Received application JSON: " + applicationJson);
+        System.out.println("📎 Received CV file: " + cvFile.getOriginalFilename());
+
         try {
             ApplicationDto applicationDto = new ObjectMapper().readValue(applicationJson, ApplicationDto.class);
             applicationDto.setCvFile(cvFile);
             ApplicationDto saved = applicationService.apply(applicationDto);
             return ResponseEntity.ok(saved);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body("Application failed: " + e.getMessage());
         }
     }
 
+    // ✅ Get applications by JobSeeker ID
     @GetMapping("/jobseeker/{jobSeekerId}")
     public ResponseEntity<List<ApplicationDto>> getApplicationsByJobSeeker(@PathVariable Long jobSeekerId) {
         List<ApplicationDto> list = applicationService.getApplicationsByJobSeeker(jobSeekerId);
         return ResponseEntity.ok(list);
     }
 
+    // ✅ Download CV file
     @GetMapping("/download-cv/{applicationId}")
     public ResponseEntity<Resource> downloadCV(@PathVariable Long applicationId) throws Exception {
         Application application = applicationRepo.findById(applicationId)

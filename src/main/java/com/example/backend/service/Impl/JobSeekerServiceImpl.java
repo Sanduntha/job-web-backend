@@ -21,14 +21,28 @@ public class JobSeekerServiceImpl implements JobSeekerService {
     private final ModelMapper modelMapper;
 
     @Override
-    public JobSeekerDto createJobSeeker(JobSeekerDto jobSeekerDto) throws Exception {
-        Optional<User> userOpt = userRepo.findById(jobSeekerDto.getUserId());
-        if (userOpt.isEmpty()) throw new Exception("User not found");
+    public JobSeekerDto createJobSeeker(JobSeekerDto dto) throws Exception {
+        User user = userRepo.findById(dto.getUserId())
+                .orElseThrow(() -> new Exception("User not found"));
 
-        JobSeekerProfile jobSeeker = modelMapper.map(jobSeekerDto, JobSeekerProfile.class);
-        jobSeeker.setUser(userOpt.get());
-        JobSeekerProfile saved = jobSeekerRepo.save(jobSeeker);
-        return modelMapper.map(saved, JobSeekerDto.class);
+        JobSeekerProfile profile = new JobSeekerProfile();
+        profile.setName(dto.getName());
+        profile.setJobCategory(dto.getJobCategory());
+        profile.setSkill(dto.getSkill());
+        profile.setContactNumber(dto.getContactNumber());
+        profile.setUser(user);
+
+        JobSeekerProfile saved = jobSeekerRepo.save(profile);
+
+        JobSeekerDto response = new JobSeekerDto();
+        response.setId(saved.getId());
+        response.setName(saved.getName());
+        response.setJobCategory(saved.getJobCategory());
+        response.setSkill(saved.getSkill());
+        response.setContactNumber(saved.getContactNumber());
+        response.setUserId(saved.getUser().getId());
+
+        return response;
     }
 
     @Override

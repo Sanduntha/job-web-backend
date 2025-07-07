@@ -59,18 +59,21 @@ public class UserServiceImpl implements UserService {
         User user = userOpt.get();
 
         String decodedPassword = decodePassword(user.getPassword());
-        if (!decodedPassword.equals(loginRequest.getPassword())) {  // fix here
+        if (!decodedPassword.equals(loginRequest.getPassword())) {
             throw new Exception("Invalid credentials");
         }
 
-        String token = tokenGenerator.generateToken(user.getEmail());
+        String token = tokenGenerator.generateToken(user);// we'll improve this next
 
         LoginData response = new LoginData();
+        response.setId(user.getId());          // set the user id here
         response.setEmail(user.getEmail());
         response.setRole(user.getRole());
         response.setToken(token);
+        response.setPassword(null);             // hide password
         return response;
     }
+
 
 
 }
